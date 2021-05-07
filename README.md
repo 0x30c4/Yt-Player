@@ -14,7 +14,7 @@
 
 # Preview!
   ## DEMO !!!
-  ## 🔷 <a href="https://drive.google.com/file/d/1oGLMmhcmMDk8U7bgrWZZGGjPaPAYzBmY/view?usp=sharing">Demo with sound</a>
+  ## 🔷 [**Click here to view the demo video with sound**](https://drive.google.com/file/d/1oGLMmhcmMDk8U7bgrWZZGGjPaPAYzBmY/view?usp=sharing)
   ![Main window](https://raw.githubusercontent.com/0x30c4/Yt-Player/main/SS/demo-g.gif?raw=true)
 
   ## Main Window
