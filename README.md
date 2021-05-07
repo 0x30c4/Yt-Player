@@ -1,5 +1,5 @@
 # Yt-Player
-### A free music player that can play any song from the Youtube.
+### A free music player that can directly stream any song from the Youtube.
 
 ## 🔴 Why I use Yt-Player when there is Youtube Music and Spotify !???
 ![why!](https://media.giphy.com/media/5QP2SaG7TlBjH0mbo5/giphy.gif)
