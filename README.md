@@ -5,12 +5,11 @@
 ![why!](https://media.giphy.com/media/5QP2SaG7TlBjH0mbo5/giphy.gif)
 
 # 🟢 Reasons
-### 🔳 Now Google cant track you with cookies
-### 🔳 Yt-player usage less resource.
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔳 When you open a browser to play a song from youtube, on average that one tab usage more then 150 MB (depending on your processor) of RAM but on the other hand Yt-Player usage only 10 to 20 MB RAM 
-### 🔳 It can run in background.
-### 🔳 Yt-Player is Free and Youtube Music or Spotify is Not!
-### 🔳 Youtube Music is not available in Bangladesh
+* You don't need to open a browser to play a song form Youtube 
+* Yt-player usage less resource. When you open a browser to play a song from youtube, on average that one tab usage more then 150 MB (depending on your processor) of RAM but on the other hand Yt-Player usage only 10 to 20 MB RAM 
+* It can run in background.
+* Yt-Player is Free and Youtube Music or Spotify is Not!
+* Youtube Music is not available in Bangladesh
 
 
 # Preview!
