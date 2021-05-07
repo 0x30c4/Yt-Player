@@ -11,9 +11,7 @@
 ### 🔳 It can run in background.
 ### 🔳 Yt-Player is Free and Youtube Music or Spotify is Not!
 ### 🔳 Youtube Music is not available in Bangladesh
-### 🔳 I can!
-![I can](https://gifimage.net/wp-content/uploads/2017/09/because-i-can-gif-2.gif)
-    
+
 
 # Preview!
   ## DEMO !!!
