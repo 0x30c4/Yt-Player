@@ -1,15 +1,15 @@
 # Yt-Player
-A free music player that can play any song from the youtube.
+### A free music player that can play any song from the Youtube.
 
-## 🔴 Why I made Yt-Player when there is Youtube Music!???
+## 🔴 Why I use Yt-Player when there is Youtube Music and Spotify !???
 ![why!](https://media.giphy.com/media/5QP2SaG7TlBjH0mbo5/giphy.gif)
 
 # 🟢 Reasons
 ### 🔳 Now Google cant track you with cookies
 ### 🔳 Yt-player usage less resource.
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔳 When you open a browser to play a song from youtube, on average that one tab usage more then 150 MB of RAM but on the other hand Yt-Player usage 10 to 20 MB RAM 
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔳 When you open a browser to play a song from youtube, on average that one tab usage more then 150 MB (depending on your processor) of RAM but on the other hand Yt-Player usage only 10 to 20 MB RAM 
 ### 🔳 It can run in background.
-### 🔳 Yt-Player is Free and Youtube Music is Not!
+### 🔳 Yt-Player is Free and Youtube Music or Spotify is Not!
 ### 🔳 Youtube Music is not available in Bangladesh
 ### 🔳 I can!
 ![I can](https://gifimage.net/wp-content/uploads/2017/09/because-i-can-gif-2.gif)
