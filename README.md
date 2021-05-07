@@ -4,9 +4,10 @@ A free music player that can play any song from the youtube.
 ## Why I made Yt-Player when there is Youtube Music!???
 ![why!](https://media.giphy.com/media/5QP2SaG7TlBjH0mbo5/giphy.gif)
 
-#  And the first ans is Yt-Player is Free!
-## 
-
+#  And the firstly is Yt-Player is Free and Youtube Music is Not!
+#  Second, Youtube Music is not available in Bangladesh
+#  Third, I can!
+![I can](https://gifimage.net/wp-content/uploads/2017/09/because-i-can-gif-2.gif)
     
 
 # Preview!
