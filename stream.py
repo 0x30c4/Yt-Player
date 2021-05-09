@@ -1,5 +1,3 @@
-from pafy import new
-from requests import get
 from subprocess import Popen, PIPE, check_output
 from youtube_dl import YoutubeDL
 from sys import stderr, argv
