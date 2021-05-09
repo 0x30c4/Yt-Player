@@ -172,6 +172,7 @@ if __name__ == "__main__":
 
         if argv[1] == 'q': exit()
 
+
         if len(argv) == 2:
             if argv[1] == 'p':
                 obj.streamCtl("pause")
@@ -182,8 +183,11 @@ if __name__ == "__main__":
 
         elif len(argv) >= 2:
             obj.songNameOrUrl = " ".join(argv[1:])
-
             for i in obj.play():
                 pass
+        if argv[1].startswith("https://"):
+            obj.songNameOrUrl = argv[1]
+            for i in obj.play():
+                print(i, end='\r')
 # pyinstaller lib/stream.py ; rm -rf build ; cp -r dist/stream . ; rm -rf dist
 # ./youtube-dl.exe -J -q -f bestaudio ytsearch:"tommar jonno by arnob" -o -
