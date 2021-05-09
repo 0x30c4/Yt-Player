@@ -7,17 +7,22 @@ from os import name, remove, system, path, chdir
 from psutil import Process
 
 
+class classproperty(property):
+    def __get__(self, cls, owner):
+        return classmethod(self.fget).__get__(None, owner)()
+
+
 class Stream:
     def __init__(self, cookies = 'cookies.txt', _search = None):
         self._search = _search
 
-        self.ffplay = "bin\\ffplay.exe"
-        self.ytdlexe = "bin\\youtube-dl.exe"
+        #self.ffplay = "bin\\ffplay.exe"
+        #self.ytdlexe = "bin\\youtube-dl.exe"
         self.cookies = cookies
 
-        if name != "nt":
-            self.ffplay = "ffplay"
-            self.ytdlexe = "youtube-dl"
+        #if name != "nt":
+        #    self.ffplay = "ffplay"
+        #    self.ytdlexe = "youtube-dl"
 
         self.ctime = 0
         self.stats = {
@@ -54,6 +59,20 @@ class Stream:
     # def getDuration(self):
     #     return
 
+    @classproperty
+    def ffplay(self):
+        if name != "nt":
+            return "ffplay"
+        else:
+            return "bin\\ffplay.exe"
+
+    @classproperty
+    def ytdlexe(self):
+        if name != "nt":
+            return "youtube-dl"
+        else:
+            return "bin\\youtube-dl.exe"
+
     @property
     def songNameOrUrl(self):
         if bool(self._search):
@@ -64,6 +83,7 @@ class Stream:
 
     @songNameOrUrl.setter
     def songNameOrUrl(self, su):
+        print("change")
         self._search = su
         self._getDuration()
 
@@ -94,28 +114,40 @@ class Stream:
 
     @staticmethod
     def getPidof(pname, argToLook):
-        command = f"wmic process get commandline,processid"
-        try:
-            with Popen(command.split(), stdout=PIPE, stdin=PIPE, universal_newlines=True) as wmic:
-                for line in wmic.stdout.readlines():
-                    if pname in line and argToLook in line:
-                        line = line.split()[-1]
-                        return int(line)
-        except Exception as e:
-            print(str(e))
+        if name != "nt":
+            command = f"ps aux"
+            try:
+                with Popen(command.split(), stdout=PIPE, stdin=PIPE) as psall:
+                    for line in psall.stdout.readlines():
+                        line = line.decode()
+                        if argToLook in line:
+                            line = line.split()[1]
+                            return line
+
+            except Exception as e:
+                print(str(e))
+        else:
+            command = f"wmic process get commandline,processid"
+            try:
+                with Popen(command.split(), stdout=PIPE, stdin=PIPE, universal_newlines=True) as wmic:
+                    for line in wmic.stdout.readlines():
+                        if pname in line and argToLook in line:
+                            line = line.split()[-1]
+                            return int(line)
+            except Exception as e:
+                print(str(e))
 
 
     @staticmethod
     def streamCtl(command):
         try:
-            pid = Stream.getPidof("ffplay.exe", "-nodisp -autoexit -loglevel 8 -volume 100 -stats -i -")
+            pid = Stream.getPidof(Stream.ffplay, "-nodisp -autoexit -loglevel 8 -volume 100 -stats -i -")
             if pid:
                 psProcess = Process(pid=pid)
-                print(pid)
                 if command == "pause":
                     psProcess.suspend()
                 elif command == "stop":
-                    pid = Stream.getPidof("youtube-dl.exe", "-q -f bestaudio")
+                    pid = Stream.getPidof(Stream.ytdlexe, "-q -f bestaudio")
 
                     Process(pid=pid).kill()
                     psProcess.kill()
@@ -135,19 +167,23 @@ if __name__ == "__main__":
     if not len(argv) == 1:
         obj = Stream()
 
-        if argv[1] == 'p' and len(argv) == 2:
-            obj.streamCtl("pause")
-        elif argv[1] == 's' and len(argv) == 2:
-            obj.streamCtl("stop")
-        elif argv[1] == 'r' and len(argv) == 2:
-            obj.streamCtl("resume")
+        print(obj.getPidof(Stream.ffplay, "-nodisp -autoexit -loglevel 8 -volume 100 -stats -i -"))
+        #obj.streamCtl("pause")
+
+        if argv[1] == 'q': exit()
+
+        if len(argv) == 2:
+            if argv[1] == 'p':
+                obj.streamCtl("pause")
+            elif argv[1] == 's':
+                obj.streamCtl("stop")
+            elif argv[1] == 'r':
+                obj.streamCtl("resume")
+
         elif len(argv) >= 2:
             obj.songNameOrUrl = " ".join(argv[1:])
 
-            # print(obj.songNameOrUrl)
-            # print(obj.duration)
-
             for i in obj.play():
-                print(i)
+                pass
 # pyinstaller lib/stream.py ; rm -rf build ; cp -r dist/stream . ; rm -rf dist
 # ./youtube-dl.exe -J -q -f bestaudio ytsearch:"tommar jonno by arnob" -o -
