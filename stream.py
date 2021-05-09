@@ -8,10 +8,17 @@ from psutil import Process
 
 
 class Stream:
-    def __init__(self, _search=None):
+    def __init__(self, cookies = 'cookies.txt', _search = None):
         self._search = _search
+
         self.ffplay = "bin\\ffplay.exe"
         self.ytdlexe = "bin\\youtube-dl.exe"
+        self.cookies = cookies
+
+        if name != "nt":
+            self.ffplay = "ffplay"
+            self.ytdlexe = "youtube-dl"
+
         self.ctime = 0
         self.stats = {
             "CS": 0,
@@ -45,7 +52,7 @@ class Stream:
 
     # @property
     # def getDuration(self):
-    #     return 
+    #     return
 
     @property
     def songNameOrUrl(self):
@@ -54,7 +61,7 @@ class Stream:
                 return self._search
             else:
                 return f"ytsearch:{self._search}"
-    
+
     @songNameOrUrl.setter
     def songNameOrUrl(self, su):
         self._search = su
@@ -64,7 +71,7 @@ class Stream:
         # print(self.songNameOrUrl)
         # print(self._getDuration(self.songNameOrUrl))
         try:
-            with Popen([self.ytdlexe, "-q", "-f", "bestaudio", self.songNameOrUrl, "-o", "-"], stdout=PIPE) as ytproc:
+            with Popen([self.ytdlexe, "--force-ipv4", "--cookies", self.cookies,"-q", "-f", "bestaudio", self.songNameOrUrl, "-o", "-"], stdout=PIPE) as ytproc:
 
                 with Popen([self.ffplay, "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"], stdin=ytproc.stdout, stderr=PIPE) as ffplayproc:
                     line = ''
@@ -129,18 +136,18 @@ if __name__ == "__main__":
         obj = Stream()
 
         if argv[1] == 'p' and len(argv) == 2:
-            obj.streamCtl("pause") 
+            obj.streamCtl("pause")
         elif argv[1] == 's' and len(argv) == 2:
             obj.streamCtl("stop")
         elif argv[1] == 'r' and len(argv) == 2:
             obj.streamCtl("resume")
         elif len(argv) >= 2:
             obj.songNameOrUrl = " ".join(argv[1:])
-            
+
             # print(obj.songNameOrUrl)
             # print(obj.duration)
 
             for i in obj.play():
                 print(i)
 # pyinstaller lib/stream.py ; rm -rf build ; cp -r dist/stream . ; rm -rf dist
-# ./youtube-dl.exe -J -q -f bestaudio ytsearch:"tommar jonno by arnob" -o - 
+# ./youtube-dl.exe -J -q -f bestaudio ytsearch:"tommar jonno by arnob" -o -
