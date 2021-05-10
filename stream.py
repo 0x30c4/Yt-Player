@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 from subprocess import Popen, PIPE
-from youtube_dl import YoutubeDL
 from sys import stderr, argv
 from os import name, remove, system, path, chdir
 from psutil import Process, process_iter
