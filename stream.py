@@ -1,8 +1,9 @@
+#!/usr/bin/python3
 from subprocess import Popen, PIPE
 from youtube_dl import YoutubeDL
 from sys import stderr, argv
 from os import name, remove, system, path, chdir
-from psutil import Process
+from psutil import Process, process_iter
 
 
 class classproperty(property):
@@ -13,14 +14,14 @@ class classproperty(property):
 class Stream:
     def __init__(self, cookies = 'cookies.txt', _search = None):
         self._search = _search
-
-        #self.ffplay = "bin\\ffplay.exe"
-        #self.ytdlexe = "bin\\youtube-dl.exe"
         self.cookies = cookies
+        
+        # self.ytdlcmdline = [self.ytdlexe, "--force-ipv4", "--cookies", self.cookies, "-q", "-f", "bestaudio", self.songNameOrUrl, "-o", "-"]
+        # self.ffplaycmdline = [self.ffplay, "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"]
 
-        #if name != "nt":
-        #    self.ffplay = "ffplay"
-        #    self.ytdlexe = "youtube-dl"
+        self.ytdlcmdline = ['', "--force-ipv4", "--cookies", self.cookies, "-q", "-f", "bestaudio", '', "-o", "-"]
+        self.ffplaycmdline = ['', "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"]
+
 
         self.ctime = 0
         self.stats = {
@@ -30,7 +31,6 @@ class Stream:
             "M": 0,
             "S": 0
         }
-        # chdir("C:\\Users\\sami\\Desktop\\tmp\\Yt-Player")
 
     def _getDuration(self):
         try:
@@ -52,10 +52,6 @@ class Stream:
         except Exception as e:
             print("Error in _getDuration : " + str(e), file=stderr)
             return False
-
-    # @property
-    # def getDuration(self):
-    #     return
 
     @classproperty
     def ffplay(self):
@@ -83,28 +79,35 @@ class Stream:
     def songNameOrUrl(self, su):
         self._search = su
         self._getDuration()
-        print(self.stats)
+        # print(self.stats)
 
     def play(self):
-        print(self.stats)
-        # print(self._getDuration(self.songNameOrUrl))
+        # print(self.stats)
+        self.ytdlcmdline[0] = self.ytdlexe
+        self.ytdlcmdline[7] = self.songNameOrUrl
+        self.ffplaycmdline[0] = self.ffplay
         try:
-            with Popen([self.ytdlexe, "--force-ipv4", "--cookies", self.cookies, "-q", "-f", "bestaudio", self.songNameOrUrl, "-o", "-"], stdout=PIPE) as ytproc:
+            with Popen(self.ytdlcmdline, stdout=PIPE) as ytproc:
 
-                with Popen([self.ffplay, "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"], stdin=ytproc.stdout, stderr=PIPE) as ffplayproc:
+                with Popen(self.ffplaycmdline, stdin=ytproc.stdout, stderr=PIPE) as ffplayproc:
                     line = ''
                     # self.stats.update({"ffplay": ffplayproc.pid})
                     # self.stats.update({"ytdl": ytproc.pid})
-                    while ffplayproc.poll() is None:
-                        c = ffplayproc.stderr.read(1).decode()
-                        line = line + c
-                        if c == '\r':
-                            line = line.split()[0]
-                            if not line == 'nan':
-                                self.ctime = int(line.split('.')[0])
-                                self.stats["CS"] = self.ctime
-                                yield self.stats
-                            line = ''
+                    try:
+                        while ffplayproc.poll() is None:
+                            c = ffplayproc.stderr.read(1).decode()
+                            line = line + c
+                            if c == '\r':
+                                line = line.split()[0]
+                                if not line == 'nan':
+                                    self.ctime = int(line.split('.')[0])
+                                    self.stats["CS"] = self.ctime
+                                    yield self.stats
+                                line = ''
+                    except Exception as e:
+                        print("Error in play->ffplay : " + str(e), file=stderr)
+                        pass
+                        # yield {'CS': 0, 'TS': 0, 'H': 0, 'M': 0, 'S': 0}
 
         except Exception as e:
             print("Error in play : " + str(e), file=stderr)
@@ -112,28 +115,12 @@ class Stream:
 
     @staticmethod
     def getPidof(pname, argToLook):
-        if name != "nt":
-            command = f"ps aux"
-            try:
-                with Popen(command.split(), stdout=PIPE, stdin=PIPE) as psall:
-                    for line in psall.stdout.readlines():
-                        line = line.decode()
-                        if argToLook in line:
-                            line = line.split()[1]
-                            return line
-
-            except Exception as e:
-                print("Error in getPidof : " + str(e), file=stderr)
-        else:
-            command = f"wmic process get commandline,processid"
-            try:
-                with Popen(command.split(), stdout=PIPE, stdin=PIPE, universal_newlines=True) as wmic:
-                    for line in wmic.stdout.readlines():
-                        if pname in line and argToLook in line:
-                            line = line.split()[-1]
-                            return int(line)
-            except Exception as e:
-                print("Error in getPidof : " + str(e), file=stderr)
+        try:
+            for proc in process_iter():
+                if argToLook in " ".join(proc.cmdline()):
+                    return int(proc.pid)
+        except Exception as e:
+            print("Error in getPidof : " + str(e), file=stderr)
 
 
     @staticmethod
@@ -165,7 +152,7 @@ if __name__ == "__main__":
     if not len(argv) == 1:
         obj = Stream()
 
-        print(obj.getPidof(Stream.ffplay, "-nodisp -autoexit -loglevel 8 -volume 100 -stats -i -"))
+        # print(obj.getPidof(Stream.ffplay, "-q -f bestaudio"))
         #obj.streamCtl("pause")
 
         if argv[1] == 'q': exit()
