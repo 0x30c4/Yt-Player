@@ -36,7 +36,7 @@ class Stream:
         try:
             with Popen([self.ytdlexe, "--get-duration", "--cookies", self.cookies, self.songNameOrUrl], stdout=PIPE) as d:
                 du = d.stdout.readline().decode().strip().split(":")
-                print(du)
+                # print(du)
                 if du.__len__() == 1:
                     self.stats["S"] = int(du[0]) if bool(du[0]) else 0
                 elif du.__len__() == 2:
@@ -48,7 +48,7 @@ class Stream:
                     self.stats["S"] = int(du[2]) if bool(du[2]) else 0
 
                 self.stats["TS"] = self.stats["H"] * 3600 + self.stats["M"] * 60 + self.stats["S"]
-                print(self.stats)
+                # print(self.stats)
         except Exception as e:
             print("Error in _getDuration : " + str(e), file=stderr)
             return False
@@ -93,21 +93,21 @@ class Stream:
                     line = ''
                     # self.stats.update({"ffplay": ffplayproc.pid})
                     # self.stats.update({"ytdl": ytproc.pid})
-                    try:
-                        while ffplayproc.poll() is None:
+                    while ffplayproc.poll() is None:
                             c = ffplayproc.stderr.read(1).decode()
                             line = line + c
                             if c == '\r':
-                                line = line.split()[0]
-                                if not line == 'nan':
-                                    self.ctime = int(line.split('.')[0])
-                                    self.stats["CS"] = self.ctime
-                                    yield self.stats
-                                line = ''
-                    except Exception as e:
-                        print("Error in play->ffplay : " + str(e), file=stderr)
-                        pass
-                        # yield {'CS': 0, 'TS': 0, 'H': 0, 'M': 0, 'S': 0}
+                                # line = line.replace("ALSA", "")
+                                line = line.split()[0].strip()
+                                try:
+                                    if not line == 'nan':
+                                        self.ctime = int(line.split('.')[0])
+                                        self.stats["CS"] = self.ctime
+                                        yield self.stats
+                                    line = ''
+                                except Exception as e:
+                                    print("Error in play->ffplay : " + str(e), file=stderr)
+                                    line = ''
 
         except Exception as e:
             print("Error in play : " + str(e), file=stderr)
@@ -126,15 +126,21 @@ class Stream:
     @staticmethod
     def streamCtl(command):
         try:
-            pid = Stream.getPidof(Stream.ffplay, "-nodisp -autoexit -loglevel 8 -volume 100 -stats -i -")
-            if pid:
-                psProcess = Process(pid=pid)
+            pidff = Stream.getPidof(Stream.ffplay, "-nodisp -autoexit -loglevel 8 -volume 100 -stats -i -")
+            pidyt = Stream.getPidof(Stream.ytdlexe, "-q -f bestaudio")
+            if name != 'nt':
+                if command == "pause":
+                    system(f"kill -STOP {pidff}")
+                elif command == "resume":
+                    system(f"kill -CONT {pidff}")
+                elif command == "stop":
+                    system(f"kill -9 {pidff} {pidyt}")
+            if pidff:
+                psProcess = Process(pid=pidff)
                 if command == "pause":
                     psProcess.suspend()
                 elif command == "stop":
-                    pid = Stream.getPidof(Stream.ytdlexe, "-q -f bestaudio")
-
-                    Process(pid=pid).kill()
+                    Process(pid=pidyt).kill()
                     psProcess.kill()
                 elif command == "resume":
                     psProcess.resume()
