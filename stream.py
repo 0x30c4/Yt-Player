@@ -3,7 +3,7 @@ from subprocess import Popen, PIPE
 from sys import stderr, argv
 from os import name, remove, system, path, chdir
 from psutil import Process, process_iter
-
+from json import loads
 
 class classproperty(property):
     def __get__(self, cls, owner):
@@ -14,11 +14,11 @@ class Stream:
     def __init__(self, cookies = 'cookies.txt', _search = None):
         self._search = _search
         self.cookies = cookies
-        
+
         # self.ytdlcmdline = [self.ytdlexe, "--force-ipv4", "--cookies", self.cookies, "-q", "-f", "bestaudio", self.songNameOrUrl, "-o", "-"]
         # self.ffplaycmdline = [self.ffplay, "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"]
 
-        self.ytdlcmdline = ['', "--force-ipv4", "--cookies", self.cookies, "-q", "-f", "bestaudio", '', "-o", "-"]
+        self.ytdlcmdline = ['',  "--print-json", "--cookies", self.cookies, "-q", "-f", "bestaudio", '', "-o", "-"]
         self.ffplaycmdline = ['', "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"]
 
 
@@ -77,7 +77,7 @@ class Stream:
     @songNameOrUrl.setter
     def songNameOrUrl(self, su):
         self._search = su
-        self._getDuration()
+        # self._getDuration()
         # print(self.stats)
 
     def play(self):
@@ -86,17 +86,13 @@ class Stream:
         self.ytdlcmdline[7] = self.songNameOrUrl
         self.ffplaycmdline[0] = self.ffplay
         try:
-            with Popen(self.ytdlcmdline, stdout=PIPE) as ytproc:
-
+            with Popen(self.ytdlcmdline, stdout=PIPE, stderr=PIPE) as ytproc:
                 with Popen(self.ffplaycmdline, stdin=ytproc.stdout, stderr=PIPE) as ffplayproc:
                     line = ''
-                    # self.stats.update({"ffplay": ffplayproc.pid})
-                    # self.stats.update({"ytdl": ytproc.pid})
                     while ffplayproc.poll() is None:
                             c = ffplayproc.stderr.read(1).decode()
                             line = line + c
                             if c == '\r':
-                                # line = line.replace("ALSA", "")
                                 line = line.split()[0].strip()
                                 try:
                                     if not line == 'nan':
@@ -174,7 +170,8 @@ if __name__ == "__main__":
         elif len(argv) >= 2:
             obj.songNameOrUrl = " ".join(argv[1:])
             for i in obj.play():
-                pass
+                print(i, end='\r')
+
 
         if argv[1].startswith("https://"):
             obj.songNameOrUrl = argv[1]
