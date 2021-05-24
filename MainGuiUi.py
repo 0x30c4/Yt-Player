@@ -3,8 +3,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QFrame
 from PyQt5.QtCore import Qt, QSize, QRect
 from PyQt5.uic import loadUi
-# from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QWidget, QCheckBox, QSystemTrayIcon, \
-#     QSpacerItem, QSizePolicy, QMenu, QAction, QStyle
 from os import name, system, chdir, remove, sys
 from datetime import timedelta
 
@@ -26,9 +24,9 @@ class MainGuiUi(QMainWindow):
     def __init__(self):
         super(MainGuiUi, self).__init__()
         loadUi(UI_FILES["main"], self)
-        
+
         # chdir("C:\\Users\\sami\\Desktop\\tmp\\Yt-Player")
-        
+
         self.imgPaths = {
             "loop_0": r"img\loop_off.png",
             "loop_1": r"img\loop_on.png",
@@ -39,7 +37,7 @@ class MainGuiUi(QMainWindow):
             "search": r"img\search.png",
             "stop":   r"img\stop.png"
         }
-        
+
         self.isPause = False
         self.isRepeat = False
         self.isStop = False
@@ -48,7 +46,7 @@ class MainGuiUi(QMainWindow):
 
         self.songs = {}
         self.songCount = 0
-        
+
 
         self.playB.clicked.connect(self.Play)
         self.playB.setIcon(QIcon(self.imgPaths["play"]))
@@ -63,7 +61,7 @@ class MainGuiUi(QMainWindow):
         self.nextB.setIcon(QIcon(self.imgPaths["next"]))
         self.nextB.setIconSize(QSize(90, 90))
 
-        
+
         self.stopB.clicked.connect(self.Stop)
         self.stopB.setIcon(QIcon(self.imgPaths["stop"]))
         self.stopB.setIconSize(QSize(90, 90))
@@ -96,8 +94,8 @@ class MainGuiUi(QMainWindow):
 
         self.show_hide_action = QtWidgets.QAction("Show/Hide", self)
         self.quit_action = QtWidgets.QAction("Exit", self)
-        
-        
+
+
         self.play_action.triggered.connect(self.Play)
         self.stop_action.triggered.connect(self.Stop)
         self.next_action.triggered.connect(self.Next)
@@ -122,7 +120,7 @@ class MainGuiUi(QMainWindow):
         self.tray_icon.setContextMenu(self.tray_menu)
         self.tray_icon.show()
         self.wdh = ''
-        
+
         self.progressBar.setTextVisible(False)
         self.progressBar.setValue(0)
 
@@ -185,7 +183,7 @@ class MainGuiUi(QMainWindow):
             self.isStop = True
             self.durationL.setText('')
             self.currentTimeL.setText('')
-            return 
+            return
 
         p = (v['CS'] / v['TS']) * 100
 
@@ -196,7 +194,7 @@ class MainGuiUi(QMainWindow):
 
         self.currentTimeL.setText(du)
 
-        
+
 
         self.progressBar.setValue(p)
         if v["TS"] - 2 == v["CS"]:
@@ -229,7 +227,7 @@ class MainGuiUi(QMainWindow):
             self.repeat_action.setText("Off Repeating")
             self.isRepeat = True
             print("Repeat 1")
-            
+
     def Stop(self):
         self.isStop = True
         self.streamobj.streamCtl("stop")
@@ -263,7 +261,7 @@ class AddToQueue(QMainWindow):
         for l in self.qsi.toPlainText().split("\n"):
             if bool(l):
                 sq.append(l)
-        
+
         print(sq)
         main = MainGuiUi()
         widget.addWidget(main)

@@ -21,7 +21,6 @@ class Stream:
         self.ytdlcmdline = ['',  "--print-json", "--cookies", self.cookies, "-q", "-f", "bestaudio", '', "-o", "-"]
         self.ffplaycmdline = ['', "-nodisp", "-autoexit", "-loglevel", "8", "-volume", "100", "-stats", "-i", "-"]
 
-
         self.ctime = 0
         self.stats = {
             "CS": 0,
