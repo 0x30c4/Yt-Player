@@ -21,6 +21,3 @@
    ![Main window](https://raw.githubusercontent.com/0x30c4/Yt-Player/main/SS/demo.JPG?raw=true)
   ## Add songs to Queue
   ![Queue window](https://raw.githubusercontent.com/0x30c4/Yt-Player/main/SS/add-q.JPG?raw=true)
-
-# 🟢 Contribution and all that jazz!
-## 🔷 Anyone can contribute to this project
